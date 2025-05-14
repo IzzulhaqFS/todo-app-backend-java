@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,6 +33,15 @@ public class UserAccount implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, updatable = false)
     private RoleEnum role;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "isActive", nullable = false)
+    private Boolean isActive;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
