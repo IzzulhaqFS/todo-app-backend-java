@@ -15,6 +15,6 @@ public class SearchRequest {
     private String sortDirection;
 
     public Integer getPage() {
-        return (page <= 0 ? 1 : page);
+        return (page <= 0 ? 0 : page - 1);
     }
 }
