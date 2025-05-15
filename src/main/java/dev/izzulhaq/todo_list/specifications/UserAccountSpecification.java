@@ -6,7 +6,10 @@ import dev.izzulhaq.todo_list.entities.UserAccount;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,15 +40,25 @@ public class UserAccountSpecification {
             }
 
             if (request.getCreatedDateStart() != null && request.getCreatedDateEnd() != null) {
-                LocalDateTime start = LocalDateTime.parse(request.getCreatedDateStart());
-                LocalDateTime end = LocalDateTime.parse(request.getCreatedDateEnd());
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate startDate = LocalDate.parse(request.getCreatedDateStart(), dateFormatter);
+                LocalDate endDate = LocalDate.parse(request.getCreatedDateEnd(), dateFormatter);
+
+                LocalDateTime start = startDate.atStartOfDay();
+                LocalDateTime end = endDate.atTime(LocalTime.MAX);
+
                 Predicate createdDateRangePredicate = criteriaBuilder.between(root.get("createdAt"), start, end);
                 predicates.add(createdDateRangePredicate);
             }
 
             if (request.getUpdatedDateStart() != null && request.getUpdatedDateEnd() != null) {
-                LocalDateTime start = LocalDateTime.parse(request.getUpdatedDateStart());
-                LocalDateTime end = LocalDateTime.parse(request.getUpdatedDateEnd());
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate startDate = LocalDate.parse(request.getUpdatedDateStart(), dateFormatter);
+                LocalDate endDate = LocalDate.parse(request.getUpdatedDateEnd(), dateFormatter);
+
+                LocalDateTime start = startDate.atStartOfDay();
+                LocalDateTime end = endDate.atTime(LocalTime.MAX);
+
                 Predicate updatedDateRangePredicate = criteriaBuilder.between(root.get("updatedAt"), start, end);
                 predicates.add(updatedDateRangePredicate);
             }
