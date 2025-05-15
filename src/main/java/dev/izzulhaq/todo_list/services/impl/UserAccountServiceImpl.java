@@ -1,5 +1,6 @@
 package dev.izzulhaq.todo_list.services.impl;
 
+import dev.izzulhaq.todo_list.constants.Constant;
 import dev.izzulhaq.todo_list.dto.request.SearchUserAccountRequest;
 import dev.izzulhaq.todo_list.dto.request.UpdatePasswordRequest;
 import dev.izzulhaq.todo_list.dto.response.UserAccountResponse;
@@ -39,7 +40,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserAccount getOne(String id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User account not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.USER_NOT_FOUND));
     }
 
     @Override
@@ -57,7 +58,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         UserAccount userAccount = getOne(id);
 
         if (!checkPassword(userAccount, request.getCurrentPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Wrong password.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, Constant.WRONG_PASSWORD);
         }
 
         userAccount.setPassword(passwordEncoder.encode(request.getNewPassword()));
@@ -74,7 +75,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         UserAccount userAccount = getOne(id);
 
         if (!userAccount.getIsActive()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User account has already deleted.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Constant.DELETE_USER_ERROR_MESSAGE);
         }
 
         userAccount.setIsActive(false);

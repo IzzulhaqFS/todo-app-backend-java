@@ -1,6 +1,7 @@
 package dev.izzulhaq.todo_list.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import dev.izzulhaq.todo_list.constants.Constant;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,16 +16,16 @@ public class TodoResponse {
     private String id;
     private String userId;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = Constant.DATE_PATTERN)
     private LocalDate todoDate;
 
     private String title;
     private String description;
     private String status;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = Constant.DATE_TIME_PATTERN)
     private LocalDateTime createdAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = Constant.DATE_TIME_PATTERN)
     private LocalDateTime updatedAt;
 }

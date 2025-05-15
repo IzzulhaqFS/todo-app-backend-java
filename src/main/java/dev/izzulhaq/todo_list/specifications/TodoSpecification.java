@@ -1,5 +1,6 @@
 package dev.izzulhaq.todo_list.specifications;
 
+import dev.izzulhaq.todo_list.constants.Constant;
 import dev.izzulhaq.todo_list.constants.TodoStatus;
 import dev.izzulhaq.todo_list.dto.request.SearchTodoRequest;
 import dev.izzulhaq.todo_list.entities.Todo;
@@ -22,7 +23,7 @@ public class TodoSpecification {
             }
 
             if (request.getTodoDate() != null) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constant.DATE_PATTERN);
                 LocalDate date = LocalDate.parse(request.getTodoDate(), formatter);
                 Predicate datePredicate = criteriaBuilder.equal(root.get("todoDate"), date);
                 predicates.add(datePredicate);

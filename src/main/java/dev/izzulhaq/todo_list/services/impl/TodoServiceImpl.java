@@ -1,5 +1,6 @@
 package dev.izzulhaq.todo_list.services.impl;
 
+import dev.izzulhaq.todo_list.constants.Constant;
 import dev.izzulhaq.todo_list.constants.TodoStatus;
 import dev.izzulhaq.todo_list.dto.request.SearchTodoRequest;
 import dev.izzulhaq.todo_list.dto.request.TodoRequest;
@@ -57,7 +58,7 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public Todo getOne(String id) {
         return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Constant.TODO_NOT_FOUND));
     }
 
     @Override
@@ -97,7 +98,7 @@ public class TodoServiceImpl implements TodoService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(newDate, formatter);
 
-        Todo todo = updateStatus(id, "rescheduled");
+        Todo todo = updateStatus(id, Constant.RESCHEDULED);
 
         Todo rescheduledTodo = Todo.builder()
                 .title(todo.getTitle())
@@ -113,12 +114,12 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public TodoResponse cancel(String id) {
-        return mapToTodoResponse(updateStatus(id, "canceled"));
+        return mapToTodoResponse(updateStatus(id, Constant.CANCELED));
     }
 
     @Override
     public TodoResponse finish(String id) {
-        return mapToTodoResponse(updateStatus(id, "finished"));
+        return mapToTodoResponse(updateStatus(id, Constant.FINISHED));
     }
 
     @Override

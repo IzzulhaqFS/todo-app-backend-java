@@ -1,5 +1,6 @@
 package dev.izzulhaq.todo_list.specifications;
 
+import dev.izzulhaq.todo_list.constants.Constant;
 import dev.izzulhaq.todo_list.constants.RoleEnum;
 import dev.izzulhaq.todo_list.dto.request.SearchUserAccountRequest;
 import dev.izzulhaq.todo_list.entities.UserAccount;
@@ -40,7 +41,7 @@ public class UserAccountSpecification {
             }
 
             if (request.getCreatedDateStart() != null && request.getCreatedDateEnd() != null) {
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constant.DATE_PATTERN);
                 LocalDate startDate = LocalDate.parse(request.getCreatedDateStart(), dateFormatter);
                 LocalDate endDate = LocalDate.parse(request.getCreatedDateEnd(), dateFormatter);
 
@@ -52,7 +53,7 @@ public class UserAccountSpecification {
             }
 
             if (request.getUpdatedDateStart() != null && request.getUpdatedDateEnd() != null) {
-                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(Constant.DATE_PATTERN);
                 LocalDate startDate = LocalDate.parse(request.getUpdatedDateStart(), dateFormatter);
                 LocalDate endDate = LocalDate.parse(request.getUpdatedDateEnd(), dateFormatter);
 

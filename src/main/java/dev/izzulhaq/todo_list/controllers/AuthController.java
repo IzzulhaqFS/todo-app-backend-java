@@ -1,5 +1,6 @@
 package dev.izzulhaq.todo_list.controllers;
 
+import dev.izzulhaq.todo_list.constants.Constant;
 import dev.izzulhaq.todo_list.dto.request.AuthRequest;
 import dev.izzulhaq.todo_list.dto.response.AuthResponse;
 import dev.izzulhaq.todo_list.dto.response.CommonResponse;
@@ -14,38 +15,38 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/v1/auth")
+@RequestMapping(path = Constant.AUTH_API)
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/register/admin")
+    @PostMapping(Constant.ADMIN_REGISTER)
     public ResponseEntity<CommonResponse<AuthResponse>> registerAdmin(@RequestBody AuthRequest request) {
         AuthResponse authResponse = authService.adminRegister(request);
         CommonResponse<AuthResponse> response = CommonResponse.<AuthResponse>builder()
                 .status(HttpStatus.CREATED.value())
-                .message("Successfully register new admin.")
+                .message(Constant.REGISTER_MESSAGE_ADMIN)
                 .data(authResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/register/user")
+    @PostMapping(Constant.USER_REGISTER)
     public ResponseEntity<CommonResponse<AuthResponse>> registerUser(@RequestBody AuthRequest request) {
         AuthResponse authResponse = authService.userRegister(request);
         CommonResponse<AuthResponse> response = CommonResponse.<AuthResponse>builder()
                 .status(HttpStatus.CREATED.value())
-                .message("Successfully register new user.")
+                .message(Constant.REGISTER_MESSAGE_USER)
                 .data(authResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/login")
+    @PostMapping(Constant.LOGIN)
     public ResponseEntity<CommonResponse<AuthResponse>> login(@RequestBody AuthRequest request) {
         AuthResponse authResponse = authService.login(request);
         CommonResponse<AuthResponse> response = CommonResponse.<AuthResponse>builder()
                 .status(HttpStatus.OK.value())
-                .message("Logged in successfully.")
+                .message(Constant.LOGIN_MESSAGE)
                 .data(authResponse)
                 .build();
         return ResponseEntity.ok(response);

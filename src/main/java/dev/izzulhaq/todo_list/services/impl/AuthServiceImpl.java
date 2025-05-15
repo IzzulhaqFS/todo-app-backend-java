@@ -1,5 +1,6 @@
 package dev.izzulhaq.todo_list.services.impl;
 
+import dev.izzulhaq.todo_list.constants.Constant;
 import dev.izzulhaq.todo_list.constants.RoleEnum;
 import dev.izzulhaq.todo_list.dto.request.AuthRequest;
 import dev.izzulhaq.todo_list.dto.response.AuthResponse;
@@ -39,7 +40,7 @@ public class AuthServiceImpl implements AuthService {
                     .role(userAccount.getRole().name())
                     .build();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exist.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Constant.DUPLICATE_USER_ERROR_MESSAGE);
         }
     }
 
@@ -55,7 +56,7 @@ public class AuthServiceImpl implements AuthService {
                     .role(userAccount.getRole().name())
                     .build();
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already exist.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, Constant.DUPLICATE_USER_ERROR_MESSAGE);
         }
     }
 

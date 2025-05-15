@@ -1,5 +1,6 @@
 package dev.izzulhaq.todo_list.controllers;
 
+import dev.izzulhaq.todo_list.constants.Constant;
 import dev.izzulhaq.todo_list.dto.request.SearchUserAccountRequest;
 import dev.izzulhaq.todo_list.dto.request.UpdatePasswordRequest;
 import dev.izzulhaq.todo_list.dto.response.CommonResponse;
@@ -16,16 +17,16 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/api/v1/users")
+@RequestMapping(path = Constant.USER_ACCOUNT_API)
 public class UserAccountController {
     private final UserAccountService userAccountService;
 
-    @GetMapping("/{id}")
+    @GetMapping(Constant.USING_ID_ENDPOINT)
     public ResponseEntity<CommonResponse<UserAccountResponse>> getById(@PathVariable String id) {
         UserAccountResponse userAccountResponse = userAccountService.getById(id);
         CommonResponse<UserAccountResponse> response = CommonResponse.<UserAccountResponse>builder()
                 .status(HttpStatus.OK.value())
-                .message("Successfully retrieved user.")
+                .message(Constant.GET_USER_BY_ID_MESSAGE)
                 .data(userAccountResponse)
                 .build();
         return ResponseEntity.ok(response);
@@ -69,14 +70,14 @@ public class UserAccountController {
                 .build();
         CommonResponse<List<UserAccountResponse>> response = CommonResponse.<List<UserAccountResponse>>builder()
                 .status(HttpStatus.OK.value())
-                .message("Successfully retrieved all user.")
+                .message(Constant.GET_ALL_USER_MESSAGE)
                 .data(userAccountResponsePage.getContent())
                 .paging(pagingResponse)
                 .build();
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping(Constant.USING_ID_ENDPOINT)
     public ResponseEntity<CommonResponse<?>> updatePassword(
             @PathVariable String id,
             @RequestBody UpdatePasswordRequest request
@@ -84,17 +85,17 @@ public class UserAccountController {
         userAccountService.updatePassword(id, request);
         CommonResponse<?> response = CommonResponse.builder()
                 .status(HttpStatus.OK.value())
-                .message("Successfully update user password.")
+                .message(Constant.UPDATE_PASSWORD_MESSAGE)
                 .build();
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(Constant.USING_ID_ENDPOINT)
     public ResponseEntity<CommonResponse<?>> delete(@PathVariable String id) {
         userAccountService.delete(id);
         CommonResponse<?> response = CommonResponse.builder()
                 .status(HttpStatus.OK.value())
-                .message("Successfully delete user.")
+                .message(Constant.DELETE_USER_MESSAGE)
                 .build();
         return ResponseEntity.ok(response);
     }

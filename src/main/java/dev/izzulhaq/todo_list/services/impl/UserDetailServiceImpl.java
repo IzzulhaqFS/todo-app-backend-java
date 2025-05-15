@@ -1,5 +1,6 @@
 package dev.izzulhaq.todo_list.services.impl;
 
+import dev.izzulhaq.todo_list.constants.Constant;
 import dev.izzulhaq.todo_list.entities.UserAccount;
 import dev.izzulhaq.todo_list.repositories.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserAccount userAccount = repository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User account not found."));
+                .orElseThrow(() -> new UsernameNotFoundException(Constant.USER_NOT_FOUND));
         return new User(
                 userAccount.getUsername(),
                 userAccount.getPassword(),
