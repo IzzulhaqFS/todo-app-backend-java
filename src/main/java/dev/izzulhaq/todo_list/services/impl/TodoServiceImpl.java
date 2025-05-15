@@ -75,6 +75,7 @@ public class TodoServiceImpl implements TodoService {
 
         todo.setTitle(request.getTitle());
         todo.setDescription(request.getDescription());
+        todo.setUpdatedAt(LocalDateTime.now());
 
         return mapToTodoResponse(repository.saveAndFlush(todo));
     }
@@ -86,6 +87,7 @@ public class TodoServiceImpl implements TodoService {
         TodoStatus status = TodoStatus.findByDescription(newStatus);
 
         todo.setStatus(status);
+        todo.setUpdatedAt(LocalDateTime.now());
 
         return repository.saveAndFlush(todo);
     }
