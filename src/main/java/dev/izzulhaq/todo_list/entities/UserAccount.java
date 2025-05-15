@@ -43,6 +43,9 @@ public class UserAccount implements UserDetails {
     @Column(name = "isActive", nullable = false)
     private Boolean isActive;
 
+    @OneToMany(mappedBy = "userAccount")
+    private List<Todo> todoList;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<RoleEnum> roles = List.of(role);
