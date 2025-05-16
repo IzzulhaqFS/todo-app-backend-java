@@ -51,6 +51,15 @@ public class TodoCategoryServiceImpl implements TodoCategoryService {
     }
 
     @Override
+    public TodoCategoryResponse update(String id, TodoCategoryRequest request) {
+        TodoCategory category = getOne(id);
+
+        category.setName(request.getName());
+
+        return mapToTodoCategoryResponse(repository.saveAndFlush(category));
+    }
+
+    @Override
     public void delete(String id) {
         TodoCategory category = getOne(id);
         repository.delete(category);

@@ -8,7 +8,6 @@ import dev.izzulhaq.todo_list.dto.response.PagingResponse;
 import dev.izzulhaq.todo_list.dto.response.TodoResponse;
 import dev.izzulhaq.todo_list.services.TodoService;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.bcel.Const;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

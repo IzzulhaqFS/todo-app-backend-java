@@ -12,5 +12,6 @@ public interface TodoCategoryService {
     TodoCategoryResponse getById(String id);
     TodoCategory getOne(String id);
     List<TodoCategoryResponse> getAll();
+    TodoCategoryResponse update(String id, TodoCategoryRequest request);
     void delete(String id);
 }
