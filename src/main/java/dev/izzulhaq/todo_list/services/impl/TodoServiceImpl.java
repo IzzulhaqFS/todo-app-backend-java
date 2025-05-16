@@ -6,8 +6,10 @@ import dev.izzulhaq.todo_list.dto.request.SearchTodoRequest;
 import dev.izzulhaq.todo_list.dto.request.TodoRequest;
 import dev.izzulhaq.todo_list.dto.response.TodoResponse;
 import dev.izzulhaq.todo_list.entities.Todo;
+import dev.izzulhaq.todo_list.entities.TodoCategory;
 import dev.izzulhaq.todo_list.entities.UserAccount;
 import dev.izzulhaq.todo_list.repositories.TodoRepository;
+import dev.izzulhaq.todo_list.services.TodoCategoryService;
 import dev.izzulhaq.todo_list.services.TodoService;
 import dev.izzulhaq.todo_list.services.UserAccountService;
 import dev.izzulhaq.todo_list.specifications.TodoSpecification;
@@ -30,10 +32,12 @@ import java.time.format.DateTimeFormatter;
 public class TodoServiceImpl implements TodoService {
     private final TodoRepository repository;
     private final UserAccountService userAccountService;
+    private final TodoCategoryService todoCategoryService;
 
     @Override
     public TodoResponse create(TodoRequest request) {
         UserAccount userAccount = userAccountService.getOne(request.getUserId());
+        TodoCategory category = todoCategoryService.getOne(request.getCategoryId());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate date = LocalDate.parse(request.getDate(), formatter);
@@ -44,6 +48,7 @@ public class TodoServiceImpl implements TodoService {
                 .todoDate(date)
                 .status(TodoStatus.ONGOING)
                 .userAccount(userAccount)
+                .category(category)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -73,9 +78,11 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoResponse update(String id, TodoRequest request) {
         Todo todo = getOne(id);
+        TodoCategory category = todoCategoryService.getOne(request.getCategoryId());
 
         todo.setTitle(request.getTitle());
         todo.setDescription(request.getDescription());
+        todo.setCategory(category);
         todo.setUpdatedAt(LocalDateTime.now());
 
         return mapToTodoResponse(repository.saveAndFlush(todo));

@@ -42,4 +42,8 @@ public class Todo {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, updatable = false)
     private UserAccount userAccount;
+
+    @ManyToOne
+    @JoinColumn(name = "todo_category_id")
+    private TodoCategory category;
 }

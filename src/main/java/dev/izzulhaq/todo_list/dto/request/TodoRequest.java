@@ -20,4 +20,6 @@ public class TodoRequest {
     private String date;
 
     private String description;
+
+    private String categoryId;
 }

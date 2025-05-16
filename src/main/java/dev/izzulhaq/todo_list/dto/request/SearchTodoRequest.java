@@ -13,4 +13,5 @@ public class SearchTodoRequest extends SearchRequest {
     private String status;
     private String todoDate;
     private String userId;
+    private String categoryId;
 }

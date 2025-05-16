@@ -53,7 +53,8 @@ public class TodoController {
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "status", required = false) String status,
             @RequestParam(name = "todoDate", required = false) String todoDate,
-            @RequestParam(name = "userId", required = false) String userId
+            @RequestParam(name = "userId", required = false) String userId,
+            @RequestParam(name = "categoryId", required = false) String categoryId
     ) {
         SearchTodoRequest request = SearchTodoRequest.builder()
                 .page(page)
@@ -64,6 +65,7 @@ public class TodoController {
                 .status(status)
                 .todoDate(todoDate)
                 .userId(userId)
+                .categoryId(categoryId)
                 .build();
         Page<TodoResponse> todoResponsePage = todoService.getAll(request);
         PagingResponse pagingResponse = PagingResponse.builder()

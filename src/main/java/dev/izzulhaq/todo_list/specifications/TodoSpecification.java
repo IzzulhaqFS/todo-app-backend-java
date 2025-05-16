@@ -43,6 +43,14 @@ public class TodoSpecification {
                 predicates.add(statusPredicate);
             }
 
+            if (request.getCategoryId() != null) {
+                Predicate categoryPredicate = criteriaBuilder.equal(
+                        root.get("category").get("id"),
+                        request.getCategoryId()
+                );
+                predicates.add(categoryPredicate);
+            }
+
             assert query != null;
             return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
         };
