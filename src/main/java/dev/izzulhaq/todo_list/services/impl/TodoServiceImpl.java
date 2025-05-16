@@ -143,6 +143,7 @@ public class TodoServiceImpl implements TodoService {
                 .description(todo.getDescription())
                 .status(todo.getStatus().name())
                 .userId(todo.getUserAccount().getId())
+                .categoryId(todo.getCategory().getId())
                 .createdAt(todo.getCreatedAt())
                 .updatedAt(todo.getUpdatedAt())
                 .build();

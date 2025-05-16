@@ -22,6 +22,7 @@ public class TodoResponse {
     private String title;
     private String description;
     private String status;
+    private String categoryId;
 
     @JsonFormat(pattern = Constant.DATE_TIME_PATTERN)
     private LocalDateTime createdAt;

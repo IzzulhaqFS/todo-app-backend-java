@@ -1,6 +1,5 @@
 package dev.izzulhaq.todo_list.controllers;
 
-import dev.izzulhaq.todo_list.constants.Constant;
 import dev.izzulhaq.todo_list.dto.request.TodoCategoryRequest;
 import dev.izzulhaq.todo_list.dto.response.CommonResponse;
 import dev.izzulhaq.todo_list.dto.response.TodoCategoryResponse;
@@ -51,6 +50,17 @@ public class TodoCategoryController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<CommonResponse<List<TodoCategoryResponse>>> getAllByUser(@RequestParam String userId) {
+        List<TodoCategoryResponse> todoCategoryResponse = todoCategoryService.getAllByUser(userId);
+        CommonResponse<List<TodoCategoryResponse>> response = CommonResponse.<List<TodoCategoryResponse>>builder()
+                .status(HttpStatus.OK.value())
+                .message("Successfully retrieved all category data from userId " + userId + ".")
+                .data(todoCategoryResponse)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<CommonResponse<TodoCategoryResponse>> update(
             @PathVariable String id,
@@ -67,7 +77,7 @@ public class TodoCategoryController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<CommonResponse<?>> delete(@PathVariable String id) {
-        todoCategoryService.getById(id);
+        todoCategoryService.delete(id);
         CommonResponse<?> response = CommonResponse.builder()
                 .status(HttpStatus.OK.value())
                 .message("Successfully delete category data.")

@@ -51,6 +51,12 @@ public class TodoCategoryServiceImpl implements TodoCategoryService {
     }
 
     @Override
+    public List<TodoCategoryResponse> getAllByUser(String userId) {
+        List<TodoCategory> todoCategoryList = repository.findByUserAccountId(userId);
+        return todoCategoryList.stream().map(this::mapToTodoCategoryResponse).toList();
+    }
+
+    @Override
     public TodoCategoryResponse update(String id, TodoCategoryRequest request) {
         TodoCategory category = getOne(id);
 
