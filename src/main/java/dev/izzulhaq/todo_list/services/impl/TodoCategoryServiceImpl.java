@@ -2,6 +2,7 @@ package dev.izzulhaq.todo_list.services.impl;
 
 import dev.izzulhaq.todo_list.dto.request.TodoCategoryRequest;
 import dev.izzulhaq.todo_list.dto.response.TodoCategoryResponse;
+import dev.izzulhaq.todo_list.dto.response.UserAccountResponse;
 import dev.izzulhaq.todo_list.entities.TodoCategory;
 import dev.izzulhaq.todo_list.entities.UserAccount;
 import dev.izzulhaq.todo_list.repositories.TodoCategoryRepository;
@@ -75,7 +76,18 @@ public class TodoCategoryServiceImpl implements TodoCategoryService {
         return TodoCategoryResponse.builder()
                 .id(todoCategory.getId())
                 .name(todoCategory.getName())
-                .userId(todoCategory.getUserAccount().getId())
+                .user(mapToUserAccountResponse(todoCategory.getUserAccount()))
+                .build();
+    }
+
+    private UserAccountResponse mapToUserAccountResponse(UserAccount userAccount) {
+        return UserAccountResponse.builder()
+                .id(userAccount.getId())
+                .username(userAccount.getUsername())
+                .role(userAccount.getRole().name())
+                .isActive(userAccount.getIsActive())
+                .createdAt(userAccount.getCreatedAt())
+                .updatedAt(userAccount.getUpdatedAt())
                 .build();
     }
 }

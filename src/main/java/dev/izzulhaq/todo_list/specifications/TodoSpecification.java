@@ -22,9 +22,9 @@ public class TodoSpecification {
                 predicates.add(userPredicate);
             }
 
-            if (request.getTodoDate() != null) {
+            if (request.getDeadline() != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern(Constant.DATE_PATTERN);
-                LocalDate date = LocalDate.parse(request.getTodoDate(), formatter);
+                LocalDate date = LocalDate.parse(request.getDeadline(), formatter);
                 Predicate datePredicate = criteriaBuilder.equal(root.get("todoDate"), date);
                 predicates.add(datePredicate);
             }

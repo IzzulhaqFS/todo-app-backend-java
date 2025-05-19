@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 public class SearchTodoRequest extends SearchRequest {
     private String title;
     private String status;
-    private String todoDate;
+    private String deadline;
     private String userId;
     private String categoryId;
 }

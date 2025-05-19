@@ -10,5 +10,5 @@ import lombok.*;
 public class TodoCategoryResponse {
     private String id;
     private String name;
-    private String userId;
+    private UserAccountResponse user;
 }

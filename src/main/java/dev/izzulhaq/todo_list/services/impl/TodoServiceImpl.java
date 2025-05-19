@@ -5,6 +5,7 @@ import dev.izzulhaq.todo_list.constants.TodoStatus;
 import dev.izzulhaq.todo_list.dto.request.SearchTodoRequest;
 import dev.izzulhaq.todo_list.dto.request.TodoRequest;
 import dev.izzulhaq.todo_list.dto.response.TodoResponse;
+import dev.izzulhaq.todo_list.dto.response.UserAccountResponse;
 import dev.izzulhaq.todo_list.entities.Todo;
 import dev.izzulhaq.todo_list.entities.TodoCategory;
 import dev.izzulhaq.todo_list.entities.UserAccount;
@@ -23,7 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -39,13 +39,13 @@ public class TodoServiceImpl implements TodoService {
         UserAccount userAccount = userAccountService.getOne(request.getUserId());
         TodoCategory category = todoCategoryService.getOne(request.getCategoryId());
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(request.getDate(), formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime date = LocalDateTime.parse(request.getDeadline(), formatter);
 
         Todo todo = Todo.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .todoDate(date)
+                .deadline(date)
                 .status(TodoStatus.ONGOING)
                 .userAccount(userAccount)
                 .category(category)
@@ -57,7 +57,20 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public TodoResponse getById(String id) {
-        return mapToTodoResponse(getOne(id));
+        Todo todo = getOne(id);
+
+        checkDeadline(todo);
+        repository.saveAndFlush(todo);
+        return mapToTodoResponse(todo);
+    }
+
+    private void checkDeadline(Todo todo) {
+        LocalDateTime now = LocalDateTime.now();
+        if (todo.getDeadline().isBefore(now) && (todo.getStatus() == TodoStatus.ONGOING || todo.getStatus() == TodoStatus.NEAR_DEADLINE)) {
+            updateStatus(todo, "overdue");
+        } else if (todo.getDeadline().isBefore(now.plusDays(1)) && todo.getStatus() == TodoStatus.ONGOING) {
+            updateStatus(todo, "near deadline");
+        }
     }
 
     @Override
@@ -72,6 +85,8 @@ public class TodoServiceImpl implements TodoService {
         Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
         Specification<Todo> specification = TodoSpecification.getSpecification(request);
         Page<Todo> todoPage = repository.findAll(specification, pageable);
+        todoPage.getContent().forEach(this::checkDeadline);
+        repository.saveAllAndFlush(todoPage.getContent());
         return todoPage.map(this::mapToTodoResponse);
     }
 
@@ -80,53 +95,30 @@ public class TodoServiceImpl implements TodoService {
         Todo todo = getOne(id);
         TodoCategory category = todoCategoryService.getOne(request.getCategoryId());
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime date = LocalDateTime.parse(request.getDeadline(), formatter);
+
         todo.setTitle(request.getTitle());
         todo.setDescription(request.getDescription());
         todo.setCategory(category);
+        todo.setDeadline(date);
         todo.setUpdatedAt(LocalDateTime.now());
 
         return mapToTodoResponse(repository.saveAndFlush(todo));
     }
 
     @Override
-    public Todo updateStatus(String id, String newStatus) {
+    public void complete(String id) {
         Todo todo = getOne(id);
+        updateStatus(todo, "completed");
+        repository.saveAndFlush(todo);
+    }
 
+    private void updateStatus(Todo todo, String newStatus) {
         TodoStatus status = TodoStatus.findByDescription(newStatus);
 
         todo.setStatus(status);
         todo.setUpdatedAt(LocalDateTime.now());
-
-        return repository.saveAndFlush(todo);
-    }
-
-    @Override
-    public TodoResponse reschedule(String id, String newDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(newDate, formatter);
-
-        Todo todo = updateStatus(id, Constant.RESCHEDULED);
-
-        Todo rescheduledTodo = Todo.builder()
-                .title(todo.getTitle())
-                .description(todo.getDescription())
-                .todoDate(date)
-                .status(TodoStatus.ONGOING)
-                .userAccount(todo.getUserAccount())
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        return mapToTodoResponse(repository.saveAndFlush(rescheduledTodo));
-    }
-
-    @Override
-    public TodoResponse cancel(String id) {
-        return mapToTodoResponse(updateStatus(id, Constant.CANCELED));
-    }
-
-    @Override
-    public TodoResponse finish(String id) {
-        return mapToTodoResponse(updateStatus(id, Constant.FINISHED));
     }
 
     @Override
@@ -138,14 +130,25 @@ public class TodoServiceImpl implements TodoService {
     private TodoResponse mapToTodoResponse(Todo todo) {
         return TodoResponse.builder()
                 .id(todo.getId())
-                .todoDate(todo.getTodoDate())
+                .deadline(todo.getDeadline())
                 .title(todo.getTitle())
                 .description(todo.getDescription())
                 .status(todo.getStatus().name())
-                .userId(todo.getUserAccount().getId())
-                .categoryId(todo.getCategory().getId())
+                .user(mapToUserAccountResponse(todo.getUserAccount()))
+                .category(todo.getCategory().getName())
                 .createdAt(todo.getCreatedAt())
                 .updatedAt(todo.getUpdatedAt())
+                .build();
+    }
+
+    private UserAccountResponse mapToUserAccountResponse(UserAccount userAccount) {
+        return UserAccountResponse.builder()
+                .id(userAccount.getId())
+                .username(userAccount.getUsername())
+                .role(userAccount.getRole().name())
+                .isActive(userAccount.getIsActive())
+                .createdAt(userAccount.getCreatedAt())
+                .updatedAt(userAccount.getUpdatedAt())
                 .build();
     }
 }

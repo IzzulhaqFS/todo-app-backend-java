@@ -17,7 +17,7 @@ public class TodoRequest {
     private String title;
 
     @NotBlank(message = "User Account Id is required.")
-    private String date;
+    private String deadline;
 
     private String description;
 

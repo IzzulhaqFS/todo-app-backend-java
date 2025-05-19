@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 @Builder
 public class TodoResponse {
     private String id;
-    private String userId;
+    private UserAccountResponse user;
 
-    @JsonFormat(pattern = Constant.DATE_PATTERN)
-    private LocalDate todoDate;
+    @JsonFormat(pattern = Constant.DATE_TIME_PATTERN)
+    private LocalDateTime deadline;
 
     private String title;
     private String description;
     private String status;
-    private String categoryId;
+    private String category;
 
     @JsonFormat(pattern = Constant.DATE_TIME_PATTERN)
     private LocalDateTime createdAt;

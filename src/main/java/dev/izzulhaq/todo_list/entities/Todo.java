@@ -20,8 +20,8 @@ public class Todo {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "todo_date", nullable = false, updatable = false)
-    private LocalDate todoDate;
+    @Column(name = "deadline", nullable = false)
+    private LocalDateTime deadline;
 
     @Column(name = "title", nullable = false)
     private String title;

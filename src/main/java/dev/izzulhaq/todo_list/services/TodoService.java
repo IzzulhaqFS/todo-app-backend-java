@@ -12,9 +12,6 @@ public interface TodoService {
     Todo getOne(String id);
     Page<TodoResponse> getAll(SearchTodoRequest request);
     TodoResponse update(String id, TodoRequest request);
-    Todo updateStatus(String id, String newStatus);
-    TodoResponse reschedule(String id, String newDate);
-    TodoResponse cancel(String id);
-    TodoResponse finish(String id);
+    void complete(String id);
     void delete(String id);
 }

@@ -6,10 +6,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TodoStatus {
-    FINISHED("finished"),
-    CANCELED("canceled"),
-    RESCHEDULED("rescheduled"),
-    ONGOING("ongoing");
+    ONGOING("ongoing"),
+    NEAR_DEADLINE("near deadline"),
+    OVERDUE("overdue"),
+    COMPLETED("completed"),
+    UNCOMPLETED("uncompleted");
 
     private final String description;
 

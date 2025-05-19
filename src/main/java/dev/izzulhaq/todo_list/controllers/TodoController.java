@@ -51,7 +51,7 @@ public class TodoController {
             @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "status", required = false) String status,
-            @RequestParam(name = "todoDate", required = false) String todoDate,
+            @RequestParam(name = "deadline", required = false) String deadline,
             @RequestParam(name = "userId", required = false) String userId,
             @RequestParam(name = "categoryId", required = false) String categoryId
     ) {
@@ -62,19 +62,12 @@ public class TodoController {
                 .sortDirection(sortDirection)
                 .title(title)
                 .status(status)
-                .todoDate(todoDate)
+                .deadline(deadline)
                 .userId(userId)
                 .categoryId(categoryId)
                 .build();
         Page<TodoResponse> todoResponsePage = todoService.getAll(request);
-        PagingResponse pagingResponse = PagingResponse.builder()
-                .totalPage(todoResponsePage.getTotalPages())
-                .totalElement(todoResponsePage.getTotalElements())
-                .page(todoResponsePage.getPageable().getPageNumber())
-                .size(todoResponsePage.getPageable().getPageSize())
-                .hasNext(todoResponsePage.hasNext())
-                .hasPrevious(todoResponsePage.hasPrevious())
-                .build();
+        PagingResponse pagingResponse = getPagingResponse(todoResponsePage);
         CommonResponse<List<TodoResponse>> response = CommonResponse.<List<TodoResponse>>builder()
                 .status(HttpStatus.OK.value())
                 .message(Constant.GET_ALL_TODO_MESSAGE)
@@ -82,6 +75,51 @@ public class TodoController {
                 .paging(pagingResponse)
                 .build();
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<CommonResponse<List<TodoResponse>>> getAllByUser(
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
+            @RequestParam(name = "userId") String userId,
+            @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "deadline", required = false) String deadline,
+            @RequestParam(name = "categoryId", required = false) String categoryId
+    ) {
+        SearchTodoRequest request = SearchTodoRequest.builder()
+                .page(page)
+                .size(size)
+                .sortBy(sortBy)
+                .sortDirection(sortDirection)
+                .title(title)
+                .status(status)
+                .deadline(deadline)
+                .userId(userId)
+                .categoryId(categoryId)
+                .build();
+        Page<TodoResponse> todoResponsePage = todoService.getAll(request);
+        PagingResponse pagingResponse = getPagingResponse(todoResponsePage);
+        CommonResponse<List<TodoResponse>> response = CommonResponse.<List<TodoResponse>>builder()
+                .status(HttpStatus.OK.value())
+                .message("Successfully retrieved all todo from userId " + userId + ".")
+                .data(todoResponsePage.getContent())
+                .paging(pagingResponse)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    private static PagingResponse getPagingResponse(Page<TodoResponse> todoResponsePage) {
+        return PagingResponse.builder()
+                .totalPage(todoResponsePage.getTotalPages())
+                .totalElement(todoResponsePage.getTotalElements())
+                .page(todoResponsePage.getPageable().getPageNumber())
+                .size(todoResponsePage.getPageable().getPageSize())
+                .hasNext(todoResponsePage.hasNext())
+                .hasPrevious(todoResponsePage.hasPrevious())
+                .build();
     }
 
     @PutMapping(Constant.USING_ID_ENDPOINT)
@@ -93,46 +131,6 @@ public class TodoController {
         CommonResponse<TodoResponse> response = CommonResponse.<TodoResponse>builder()
                 .status(HttpStatus.OK.value())
                 .message(Constant.UPDATE_TODO_MESSAGE)
-                .data(todoResponse)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping(Constant.RESCHEDULE_ENDPOINT)
-    public ResponseEntity<CommonResponse<TodoResponse>> reschedule(
-            @PathVariable String id,
-            @RequestParam(name = "newDate") String newDate
-    ) {
-        TodoResponse todoResponse = todoService.reschedule(id, newDate);
-        CommonResponse<TodoResponse> response = CommonResponse.<TodoResponse>builder()
-                .status(HttpStatus.OK.value())
-                .message(Constant.RESCHEDULE_TODO_MESSAGE)
-                .data(todoResponse)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping(Constant.CANCEL_ENDPOINT)
-    public ResponseEntity<CommonResponse<TodoResponse>> cancel(
-            @PathVariable String id
-    ) {
-        TodoResponse todoResponse = todoService.cancel(id);
-        CommonResponse<TodoResponse> response = CommonResponse.<TodoResponse>builder()
-                .status(HttpStatus.OK.value())
-                .message(Constant.CANCEL_TODO_MESSAGE)
-                .data(todoResponse)
-                .build();
-        return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping(Constant.FINISH_ENDPOINT)
-    public ResponseEntity<CommonResponse<TodoResponse>> finish(
-            @PathVariable String id
-    ) {
-        TodoResponse todoResponse = todoService.finish(id);
-        CommonResponse<TodoResponse> response = CommonResponse.<TodoResponse>builder()
-                .status(HttpStatus.OK.value())
-                .message(Constant.FINISH_TODO_MESSAGE)
                 .data(todoResponse)
                 .build();
         return ResponseEntity.ok(response);
