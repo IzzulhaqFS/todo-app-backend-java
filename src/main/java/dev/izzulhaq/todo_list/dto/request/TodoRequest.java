@@ -22,4 +22,5 @@ public class TodoRequest {
     private String description;
 
     private String categoryId;
+    private String priority;
 }

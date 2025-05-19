@@ -81,7 +81,7 @@ public class TodoController {
     public ResponseEntity<CommonResponse<List<TodoResponse>>> getAllByUser(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
-            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "priority") String sortBy,
             @RequestParam(name = "sortDirection", defaultValue = "desc") String sortDirection,
             @RequestParam(name = "userId") String userId,
             @RequestParam(name = "title", required = false) String title,

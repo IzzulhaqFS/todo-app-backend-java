@@ -1,5 +1,6 @@
 package dev.izzulhaq.todo_list.entities;
 
+import dev.izzulhaq.todo_list.constants.TodoPriority;
 import dev.izzulhaq.todo_list.constants.TodoStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,6 +33,10 @@ public class Todo {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private TodoStatus status;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "priority", nullable = false)
+    private TodoPriority priority;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

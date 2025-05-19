@@ -1,6 +1,7 @@
 package dev.izzulhaq.todo_list.services.impl;
 
 import dev.izzulhaq.todo_list.constants.Constant;
+import dev.izzulhaq.todo_list.constants.TodoPriority;
 import dev.izzulhaq.todo_list.constants.TodoStatus;
 import dev.izzulhaq.todo_list.dto.request.SearchTodoRequest;
 import dev.izzulhaq.todo_list.dto.request.TodoRequest;
@@ -38,6 +39,7 @@ public class TodoServiceImpl implements TodoService {
     public TodoResponse create(TodoRequest request) {
         UserAccount userAccount = userAccountService.getOne(request.getUserId());
         TodoCategory category = todoCategoryService.getOne(request.getCategoryId());
+        TodoPriority priority = TodoPriority.findByDescription(request.getPriority());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime date = LocalDateTime.parse(request.getDeadline(), formatter);
@@ -49,6 +51,7 @@ public class TodoServiceImpl implements TodoService {
                 .status(TodoStatus.ONGOING)
                 .userAccount(userAccount)
                 .category(category)
+                .priority(priority)
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -98,10 +101,13 @@ public class TodoServiceImpl implements TodoService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime date = LocalDateTime.parse(request.getDeadline(), formatter);
 
+        TodoPriority priority = TodoPriority.findByDescription(request.getPriority());
+
         todo.setTitle(request.getTitle());
         todo.setDescription(request.getDescription());
         todo.setCategory(category);
         todo.setDeadline(date);
+        todo.setPriority(priority);
         todo.setUpdatedAt(LocalDateTime.now());
 
         return mapToTodoResponse(repository.saveAndFlush(todo));
@@ -136,6 +142,7 @@ public class TodoServiceImpl implements TodoService {
                 .status(todo.getStatus().name())
                 .user(mapToUserAccountResponse(todo.getUserAccount()))
                 .category(todo.getCategory().getName())
+                .priority(todo.getPriority().name())
                 .createdAt(todo.getCreatedAt())
                 .updatedAt(todo.getUpdatedAt())
                 .build();
