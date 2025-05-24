@@ -1,10 +1,12 @@
 package dev.izzulhaq.todo_list.utils;
 
 import dev.izzulhaq.todo_list.dto.response.SubTaskResponse;
+import dev.izzulhaq.todo_list.dto.response.TodoCategoryResponse;
 import dev.izzulhaq.todo_list.dto.response.TodoResponse;
 import dev.izzulhaq.todo_list.dto.response.UserAccountResponse;
 import dev.izzulhaq.todo_list.entities.SubTask;
 import dev.izzulhaq.todo_list.entities.Todo;
+import dev.izzulhaq.todo_list.entities.TodoCategory;
 import dev.izzulhaq.todo_list.entities.UserAccount;
 
 public class MapperUtil {
@@ -42,6 +44,14 @@ public class MapperUtil {
                 .name(subTask.getName())
                 .description(subTask.getDescription())
                 .isCompleted(subTask.getIsCompleted())
+                .build();
+    }
+
+    public static TodoCategoryResponse mapToTodoCategoryResponse(TodoCategory todoCategory) {
+        return TodoCategoryResponse.builder()
+                .id(todoCategory.getId())
+                .name(todoCategory.getName())
+                .user(mapToUserAccountResponse(todoCategory.getUserAccount()))
                 .build();
     }
 }

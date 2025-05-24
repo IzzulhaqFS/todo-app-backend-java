@@ -8,6 +8,7 @@ import dev.izzulhaq.todo_list.entities.UserAccount;
 import dev.izzulhaq.todo_list.repositories.UserAccountRepository;
 import dev.izzulhaq.todo_list.services.UserAccountService;
 import dev.izzulhaq.todo_list.specifications.UserAccountSpecification;
+import dev.izzulhaq.todo_list.utils.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +35,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public UserAccountResponse getById(String id) {
-        return mapToUserAccountResponse(getOne(id));
+        return MapperUtil.mapToUserAccountResponse(getOne(id));
     }
 
     @Override
@@ -50,7 +51,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         Specification<UserAccount> specification = UserAccountSpecification.getSpecification(request);
 
         Page<UserAccount> userAccountPage = repository.findAll(specification, pageable);
-        return userAccountPage.map(this::mapToUserAccountResponse);
+        return userAccountPage.map(MapperUtil::mapToUserAccountResponse);
     }
 
     @Override
@@ -81,16 +82,5 @@ public class UserAccountServiceImpl implements UserAccountService {
         userAccount.setIsActive(false);
         userAccount.setUpdatedAt(LocalDateTime.now());
         repository.saveAndFlush(userAccount);
-    }
-
-    private UserAccountResponse mapToUserAccountResponse(UserAccount userAccount) {
-        return UserAccountResponse.builder()
-                .id(userAccount.getId())
-                .username(userAccount.getUsername())
-                .role(userAccount.getRole().name())
-                .createdAt(userAccount.getCreatedAt())
-                .updatedAt(userAccount.getUpdatedAt())
-                .isActive(userAccount.getIsActive())
-                .build();
     }
 }

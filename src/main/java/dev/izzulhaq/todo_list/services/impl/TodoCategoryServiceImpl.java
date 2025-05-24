@@ -8,6 +8,7 @@ import dev.izzulhaq.todo_list.entities.UserAccount;
 import dev.izzulhaq.todo_list.repositories.TodoCategoryRepository;
 import dev.izzulhaq.todo_list.services.TodoCategoryService;
 import dev.izzulhaq.todo_list.services.UserAccountService;
+import dev.izzulhaq.todo_list.utils.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,12 @@ public class TodoCategoryServiceImpl implements TodoCategoryService {
                 .userAccount(userAccount)
                 .build();
 
-        return mapToTodoCategoryResponse(repository.saveAndFlush(category));
+        return MapperUtil.mapToTodoCategoryResponse(repository.saveAndFlush(category));
     }
 
     @Override
     public TodoCategoryResponse getById(String id) {
-        return mapToTodoCategoryResponse(getOne(id));
+        return MapperUtil.mapToTodoCategoryResponse(getOne(id));
     }
 
     @Override
@@ -48,13 +49,13 @@ public class TodoCategoryServiceImpl implements TodoCategoryService {
     @Override
     public List<TodoCategoryResponse> getAll() {
         List<TodoCategory> todoCategoryList = repository.findAll();
-        return todoCategoryList.stream().map(this::mapToTodoCategoryResponse).toList();
+        return todoCategoryList.stream().map(MapperUtil::mapToTodoCategoryResponse).toList();
     }
 
     @Override
     public List<TodoCategoryResponse> getAllByUser(String userId) {
         List<TodoCategory> todoCategoryList = repository.findByUserAccountId(userId);
-        return todoCategoryList.stream().map(this::mapToTodoCategoryResponse).toList();
+        return todoCategoryList.stream().map(MapperUtil::mapToTodoCategoryResponse).toList();
     }
 
     @Override
@@ -63,31 +64,12 @@ public class TodoCategoryServiceImpl implements TodoCategoryService {
 
         category.setName(request.getName());
 
-        return mapToTodoCategoryResponse(repository.saveAndFlush(category));
+        return MapperUtil.mapToTodoCategoryResponse(repository.saveAndFlush(category));
     }
 
     @Override
     public void delete(String id) {
         TodoCategory category = getOne(id);
         repository.delete(category);
-    }
-
-    private TodoCategoryResponse mapToTodoCategoryResponse(TodoCategory todoCategory) {
-        return TodoCategoryResponse.builder()
-                .id(todoCategory.getId())
-                .name(todoCategory.getName())
-                .user(mapToUserAccountResponse(todoCategory.getUserAccount()))
-                .build();
-    }
-
-    private UserAccountResponse mapToUserAccountResponse(UserAccount userAccount) {
-        return UserAccountResponse.builder()
-                .id(userAccount.getId())
-                .username(userAccount.getUsername())
-                .role(userAccount.getRole().name())
-                .isActive(userAccount.getIsActive())
-                .createdAt(userAccount.getCreatedAt())
-                .updatedAt(userAccount.getUpdatedAt())
-                .build();
     }
 }
