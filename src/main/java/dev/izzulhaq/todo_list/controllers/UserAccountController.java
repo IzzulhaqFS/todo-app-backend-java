@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class UserAccountController {
     private final UserAccountService userAccountService;
 
     @GetMapping(Constant.USING_ID_ENDPOINT)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<UserAccountResponse>> getById(@PathVariable String id) {
         UserAccountResponse userAccountResponse = userAccountService.getById(id);
         CommonResponse<UserAccountResponse> response = CommonResponse.<UserAccountResponse>builder()
@@ -33,6 +35,7 @@ public class UserAccountController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CommonResponse<List<UserAccountResponse>>> getAll(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
@@ -78,6 +81,7 @@ public class UserAccountController {
     }
 
     @PatchMapping(Constant.USING_ID_ENDPOINT)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<?>> updatePassword(
             @PathVariable String id,
             @RequestBody UpdatePasswordRequest request
@@ -91,6 +95,7 @@ public class UserAccountController {
     }
 
     @DeleteMapping(Constant.USING_ID_ENDPOINT)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CommonResponse<?>> delete(@PathVariable String id) {
         userAccountService.delete(id);
         CommonResponse<?> response = CommonResponse.builder()

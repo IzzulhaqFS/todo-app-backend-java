@@ -7,6 +7,7 @@ import dev.izzulhaq.todo_list.services.TodoCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class TodoCategoryController {
     private final TodoCategoryService todoCategoryService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<TodoCategoryResponse>> create(@RequestBody TodoCategoryRequest request) {
         TodoCategoryResponse todoCategoryResponse = todoCategoryService.create(request);
         CommonResponse<TodoCategoryResponse> response = CommonResponse.<TodoCategoryResponse>builder()
@@ -29,6 +31,7 @@ public class TodoCategoryController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<TodoCategoryResponse>> getById(@PathVariable String id) {
         TodoCategoryResponse todoCategoryResponse = todoCategoryService.getById(id);
         CommonResponse<TodoCategoryResponse> response = CommonResponse.<TodoCategoryResponse>builder()
@@ -40,6 +43,7 @@ public class TodoCategoryController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CommonResponse<List<TodoCategoryResponse>>> getAll() {
         List<TodoCategoryResponse> todoCategoryResponse = todoCategoryService.getAll();
         CommonResponse<List<TodoCategoryResponse>> response = CommonResponse.<List<TodoCategoryResponse>>builder()
@@ -51,6 +55,7 @@ public class TodoCategoryController {
     }
 
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<List<TodoCategoryResponse>>> getAllByUser(@RequestParam String userId) {
         List<TodoCategoryResponse> todoCategoryResponse = todoCategoryService.getAllByUser(userId);
         CommonResponse<List<TodoCategoryResponse>> response = CommonResponse.<List<TodoCategoryResponse>>builder()
@@ -62,6 +67,7 @@ public class TodoCategoryController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<TodoCategoryResponse>> update(
             @PathVariable String id,
             @RequestBody TodoCategoryRequest request
@@ -76,6 +82,7 @@ public class TodoCategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<?>> delete(@PathVariable String id) {
         todoCategoryService.delete(id);
         CommonResponse<?> response = CommonResponse.builder()

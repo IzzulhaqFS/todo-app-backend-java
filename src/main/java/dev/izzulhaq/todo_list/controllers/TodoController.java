@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class TodoController {
     private final TodoService todoService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<TodoResponse>> create(@RequestBody TodoRequest request) {
         TodoResponse todoResponse = todoService.create(request);
         CommonResponse<TodoResponse> response = CommonResponse.<TodoResponse>builder()
@@ -33,6 +35,7 @@ public class TodoController {
     }
 
     @GetMapping(Constant.USING_ID_ENDPOINT)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<TodoResponse>> getById(@PathVariable String id) {
         TodoResponse todoResponse = todoService.getById(id);
         CommonResponse<TodoResponse> response = CommonResponse.<TodoResponse>builder()
@@ -44,6 +47,7 @@ public class TodoController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CommonResponse<List<TodoResponse>>> getAll(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
@@ -78,6 +82,7 @@ public class TodoController {
     }
 
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<List<TodoResponse>>> getAllByUser(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
@@ -123,6 +128,7 @@ public class TodoController {
     }
 
     @PutMapping(Constant.USING_ID_ENDPOINT)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<TodoResponse>> update(
             @PathVariable String id,
             @RequestBody TodoRequest request
@@ -137,6 +143,7 @@ public class TodoController {
     }
 
     @DeleteMapping(Constant.USING_ID_ENDPOINT)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<CommonResponse<?>> delete(
             @PathVariable String id
     ) {
