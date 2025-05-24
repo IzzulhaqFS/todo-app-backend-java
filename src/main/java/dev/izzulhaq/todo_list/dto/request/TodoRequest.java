@@ -3,6 +3,8 @@ package dev.izzulhaq.todo_list.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,4 +25,5 @@ public class TodoRequest {
 
     private String categoryId;
     private String priority;
+    private List<SubTaskRequest> subTasks;
 }

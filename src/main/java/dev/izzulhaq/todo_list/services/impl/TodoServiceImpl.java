@@ -5,12 +5,15 @@ import dev.izzulhaq.todo_list.constants.TodoPriority;
 import dev.izzulhaq.todo_list.constants.TodoStatus;
 import dev.izzulhaq.todo_list.dto.request.SearchTodoRequest;
 import dev.izzulhaq.todo_list.dto.request.TodoRequest;
+import dev.izzulhaq.todo_list.dto.response.SubTaskResponse;
 import dev.izzulhaq.todo_list.dto.response.TodoResponse;
 import dev.izzulhaq.todo_list.dto.response.UserAccountResponse;
+import dev.izzulhaq.todo_list.entities.SubTask;
 import dev.izzulhaq.todo_list.entities.Todo;
 import dev.izzulhaq.todo_list.entities.TodoCategory;
 import dev.izzulhaq.todo_list.entities.UserAccount;
 import dev.izzulhaq.todo_list.repositories.TodoRepository;
+import dev.izzulhaq.todo_list.services.SubTaskService;
 import dev.izzulhaq.todo_list.services.TodoCategoryService;
 import dev.izzulhaq.todo_list.services.TodoService;
 import dev.izzulhaq.todo_list.services.UserAccountService;
@@ -27,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +38,7 @@ public class TodoServiceImpl implements TodoService {
     private final TodoRepository repository;
     private final UserAccountService userAccountService;
     private final TodoCategoryService todoCategoryService;
+    private final SubTaskService subTaskService;
 
     @Override
     public TodoResponse create(TodoRequest request) {
@@ -55,12 +60,31 @@ public class TodoServiceImpl implements TodoService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        return mapToTodoResponse(repository.saveAndFlush(todo));
+        Todo newTodo = repository.saveAndFlush(todo);
+
+        if (request.getSubTasks() != null && !request.getSubTasks().isEmpty()) {
+            List<SubTask> subTaskList = request.getSubTasks().stream().map(subTaskRequest -> SubTask.builder()
+                    .name(subTaskRequest.getName())
+                    .description(subTaskRequest.getDescription())
+                    .isCompleted(false)
+                    .todo(todo)
+                    .build()
+            ).toList();
+            subTaskService.createBulk(subTaskList);
+            newTodo.setSubTasks(subTaskList);
+        }
+
+        return mapToTodoResponse(newTodo);
     }
 
     @Override
     public TodoResponse getById(String id) {
         Todo todo = getOne(id);
+        List<SubTask> subTaskList = subTaskService.getAllByTodo(todo.getId());
+
+        if (subTaskList != null && !subTaskList.isEmpty()) {
+            todo.setSubTasks(subTaskList);
+        }
 
         checkDeadline(todo);
         repository.saveAndFlush(todo);
@@ -141,10 +165,21 @@ public class TodoServiceImpl implements TodoService {
                 .description(todo.getDescription())
                 .status(todo.getStatus().name())
                 .user(mapToUserAccountResponse(todo.getUserAccount()))
+                .subTasks(todo.getSubTasks().stream().map(this::mapToSubTaskResponse).toList())
                 .category(todo.getCategory().getName())
                 .priority(todo.getPriority().name())
                 .createdAt(todo.getCreatedAt())
                 .updatedAt(todo.getUpdatedAt())
+                .build();
+    }
+
+    private SubTaskResponse mapToSubTaskResponse(SubTask subTask) {
+        return SubTaskResponse.builder()
+                .id(subTask.getId())
+                .todoId(subTask.getTodo().getId())
+                .name(subTask.getName())
+                .description(subTask.getDescription())
+                .isCompleted(subTask.getIsCompleted())
                 .build();
     }
 

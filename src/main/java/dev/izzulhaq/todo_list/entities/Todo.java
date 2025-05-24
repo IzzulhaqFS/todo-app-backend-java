@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -51,4 +52,7 @@ public class Todo {
     @ManyToOne
     @JoinColumn(name = "todo_category_id")
     private TodoCategory category;
+
+    @OneToMany(mappedBy = "todo")
+    private List<SubTask> subTasks;
 }
