@@ -12,6 +12,5 @@ public interface TodoService {
     Todo getOne(String id);
     Page<TodoResponse> getAll(SearchTodoRequest request);
     TodoResponse update(String id, TodoRequest request);
-    void complete(String id);
     void delete(String id);
 }

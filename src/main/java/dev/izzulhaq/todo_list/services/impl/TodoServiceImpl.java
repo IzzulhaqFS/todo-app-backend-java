@@ -121,10 +121,17 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoResponse update(String id, TodoRequest request) {
         Todo todo = getOne(id);
-        TodoCategory category = todoCategoryService.getOne(request.getCategoryId());
+        TodoCategory category = todo.getCategory();
+        LocalDateTime date = todo.getDeadline();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime date = LocalDateTime.parse(request.getDeadline(), formatter);
+        if (request.getCategoryId() != null) {
+            category = todoCategoryService.getOne(request.getCategoryId());
+        }
+
+        if (request.getDeadline() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            date = LocalDateTime.parse(request.getDeadline(), formatter);
+        }
 
         TodoPriority priority = TodoPriority.findByDescription(request.getPriority());
 
@@ -136,13 +143,6 @@ public class TodoServiceImpl implements TodoService {
         todo.setUpdatedAt(LocalDateTime.now());
 
         return MapperUtil.mapToTodoResponse(repository.saveAndFlush(todo));
-    }
-
-    @Override
-    public void complete(String id) {
-        Todo todo = getOne(id);
-        updateStatus(todo, "completed");
-        repository.saveAndFlush(todo);
     }
 
     private void updateStatus(Todo todo, String newStatus) {

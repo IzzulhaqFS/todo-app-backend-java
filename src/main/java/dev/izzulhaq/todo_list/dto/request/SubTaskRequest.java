@@ -9,10 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class SubTaskRequest {
-
-    @NotBlank(message = "Todo Id is required.")
-    private String todoId;
-
     @NotBlank(message = "Name is required.")
     private String name;
     private String description;
