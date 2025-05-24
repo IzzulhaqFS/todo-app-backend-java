@@ -18,6 +18,7 @@ import dev.izzulhaq.todo_list.services.TodoCategoryService;
 import dev.izzulhaq.todo_list.services.TodoService;
 import dev.izzulhaq.todo_list.services.UserAccountService;
 import dev.izzulhaq.todo_list.specifications.TodoSpecification;
+import dev.izzulhaq.todo_list.utils.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -74,7 +75,7 @@ public class TodoServiceImpl implements TodoService {
             newTodo.setSubTasks(subTaskList);
         }
 
-        return mapToTodoResponse(newTodo);
+        return MapperUtil.mapToTodoResponse(newTodo);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class TodoServiceImpl implements TodoService {
 
         checkDeadline(todo);
         repository.saveAndFlush(todo);
-        return mapToTodoResponse(todo);
+        return MapperUtil.mapToTodoResponse(todo);
     }
 
     private void checkDeadline(Todo todo) {
@@ -114,7 +115,7 @@ public class TodoServiceImpl implements TodoService {
         Page<Todo> todoPage = repository.findAll(specification, pageable);
         todoPage.getContent().forEach(this::checkDeadline);
         repository.saveAllAndFlush(todoPage.getContent());
-        return todoPage.map(this::mapToTodoResponse);
+        return todoPage.map(MapperUtil::mapToTodoResponse);
     }
 
     @Override
@@ -134,7 +135,7 @@ public class TodoServiceImpl implements TodoService {
         todo.setPriority(priority);
         todo.setUpdatedAt(LocalDateTime.now());
 
-        return mapToTodoResponse(repository.saveAndFlush(todo));
+        return MapperUtil.mapToTodoResponse(repository.saveAndFlush(todo));
     }
 
     @Override
@@ -155,42 +156,5 @@ public class TodoServiceImpl implements TodoService {
     public void delete(String id) {
         Todo todo = getOne(id);
         repository.delete(todo);
-    }
-
-    private TodoResponse mapToTodoResponse(Todo todo) {
-        return TodoResponse.builder()
-                .id(todo.getId())
-                .deadline(todo.getDeadline())
-                .title(todo.getTitle())
-                .description(todo.getDescription())
-                .status(todo.getStatus().name())
-                .user(mapToUserAccountResponse(todo.getUserAccount()))
-                .subTasks(todo.getSubTasks().stream().map(this::mapToSubTaskResponse).toList())
-                .category(todo.getCategory().getName())
-                .priority(todo.getPriority().name())
-                .createdAt(todo.getCreatedAt())
-                .updatedAt(todo.getUpdatedAt())
-                .build();
-    }
-
-    private SubTaskResponse mapToSubTaskResponse(SubTask subTask) {
-        return SubTaskResponse.builder()
-                .id(subTask.getId())
-                .todoId(subTask.getTodo().getId())
-                .name(subTask.getName())
-                .description(subTask.getDescription())
-                .isCompleted(subTask.getIsCompleted())
-                .build();
-    }
-
-    private UserAccountResponse mapToUserAccountResponse(UserAccount userAccount) {
-        return UserAccountResponse.builder()
-                .id(userAccount.getId())
-                .username(userAccount.getUsername())
-                .role(userAccount.getRole().name())
-                .isActive(userAccount.getIsActive())
-                .createdAt(userAccount.getCreatedAt())
-                .updatedAt(userAccount.getUpdatedAt())
-                .build();
     }
 }
